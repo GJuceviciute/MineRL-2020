@@ -113,7 +113,7 @@ We see that using n_clusters of 100 works well for ObtainIronPickaxe data, while
 Next we check camera actions. Many have noticed the tendency for their agents to look down more than up. This can be explained by the fact that camera action down is more common in the data set and KMeans tends to cluster more around those actions. It can be seen visually below (positive number = down):  
   
 <img src="img/mean_camera_updown_diamond.png">  
-Lower kmeans n_clusters means that your mean vertical camera action will most likely be positive (down). The agent that chooses random actions in the initial exploration phase will quickly start looking straight down and mostly stay there.  
+Lower kmeans n_clusters means that your mean vertical camera action will most likely be positive. The agent that chooses random actions in the initial exploration phase will quickly start looking straight down and mostly stay there.  
 Even with higher n_clusters the camera actions will most likely be imbalanced and the exploration phase will either have lots of sky gazing or looking at the ground.  
 
 We also checked the minimum (red) and maximum (green) vertical camera actions for each experiment:  
