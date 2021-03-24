@@ -83,24 +83,39 @@ Output will look like this:
 Maximum possible reward: 1
 ```
 This can help you figure out why your agent doesn't ever get to a higher reward - it might not have the required crafting actions, for example.
-## An experiment to find the best number of clusters for kmeans
-We run many iterations of KMeans with different numbers of clusters to find out the maximum rewards an agent can get. We also check the camera actions available (the agent sometimes doesn't even know how to look up).  
-A note on n_actions: we compare running KMeans on the full ObtainDiamond data set (~2m actions) vs running it on 1m, 100k and 10k random actions from the data set. 100k gives almost the same results as 1m and 2m, but runs much faster, so we run our experiments using that. For training RL agents using the full data set is recommended.  
+## Finding the best number of clusters for kmeans
+Setup we use:
+- Pick n_clusters, for example 70.
+- Run Kmeans clustering, deobfuscate the centroids, save them to a file.
+- Rerun above step 30-40 times, all with the same parameters, but with a different seed. Save all of them.
+- Repeat the whole thing with a different n_clusters, let's say 100.
+
+For each separate run we find out the maximum rewards an agent can get. We also check the camera actions available (the agent sometimes doesn't even know how to look up).  
+A note on n_actions: we compared running KMeans on the full ObtainDiamond data set (~2m actions) vs running it on 1m, 100k and 10k random actions from the data set. 100k gives almost the same results as 1m and 2m, but runs much faster, so we run our experiments using that. For training RL agents using the full data set is recommended.  
 
 First we run the experiments and log results to `/out`:  
 ```
 python kmeans_run_experiments.py
 ```
 ### Maximum possible rewards
-We can see max rewards for each file with:  
+Max achievable rewards are calculated by taking KMeans centroids from a single experiment, deobfuscating them into readable actions and then seeing what actions are missing on the way to obtain iron pickaxe and a diamond.  
+For example:  
+- If the agent doesn't have any 'attack' actions, max reward is 0.
+- If the agent can attack, but doesn't have a 'craft: planks' action, max reward is 1.
+- If the agent can attack, craft planks, sticks and a crafting table, but cannot place it, max reward is 11.
+- etc.
+
+Yes, technically it is possible to obtain a diamond with only the movement actions - you fall into a ravine, find diamond ore, have a creeper blow it up and pick up the diamond. Let's not be [that person](https://www.speedrun.com/mcce/run/zp342vvm).  
+We can see max rewards for each experiment's file with:  
 ```
 python max_rewards_from_files.py
 ```
 
-Max rewards vs n_clusters as tables:  
+And max rewards vs n_clusters as tables with:  
 ```
 python max_rewards_tables.py
 ```
+The tables below show the percentage of experiments that can achieve a given cumulative reward vs n_clusters.  
 Obtain Diamond:  
 <img src="img/max_rewards_with_kmeans_100k_diamond.JPG" >  
 
@@ -110,14 +125,14 @@ Obtain Iron Pickaxe:
 We see that using n_clusters of 100 works well for ObtainIronPickaxe data, while ObtainDiamond needs at least 150 to be safe.  
 
 ### Camera Actions
-Next we check camera actions. Many have noticed the tendency for their agents to look down more than up. This can be explained by the fact that camera action down is more common in the data set and KMeans tends to cluster more around those actions. It can be seen visually below (positive number = down):  
+Next we check camera actions. Many have noticed the tendency for their agents to look down more than up. This can be explained by the fact that camera action down is more common in the data set and KMeans tends to cluster more around those actions. It can be seen visually below (positive number = down, every line represents 1 experiment with shown number of KMeans clusters):  
   
 <img src="img/mean_camera_updown_diamond.png">  
-Lower kmeans n_clusters means that your mean vertical camera action will most likely be positive. The agent that chooses random actions in the initial exploration phase will quickly start looking straight down and mostly stay there.  
-Even with higher n_clusters the camera actions will most likely be imbalanced and the exploration phase will either have lots of sky gazing or looking at the ground.  
+Lower KMeans n_clusters means that your mean vertical camera action will most likely be positive. The agent that chooses random actions in the initial exploration phase will quickly start looking straight down and mostly stay there.  
+Even with higher n_clusters the camera actions can be imbalanced and the exploration phase could either have lots of sky gazing or looking at the ground.  
 
-We also checked the minimum (red) and maximum (green) vertical camera actions for each experiment:  
+We also check the minimum (red) and maximum (green) vertical camera actions for each experiment:  
 <img src="img/minmax_camera_updown_diamond_small.png">  
 Zoomed in:  
 <img src="img/minmax_camera_updown_diamond_zoomed_in.png">  
-If we zoom in, we can see that sometimes the minimum camera action is 0.0, which means that the agent doesn't have any up camera actions, only down!
+If we zoom in, we can see that sometimes the minimum camera action is 0.0, which means that the agent wouldn't have any up camera actions, only down!
