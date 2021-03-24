@@ -106,6 +106,7 @@ For example:
 - etc.
 
 Yes, technically it is possible to obtain a diamond with only the movement actions - you fall into a ravine, find diamond ore, have a creeper blow it up and pick up the diamond. Let's not be [that person](https://www.speedrun.com/mcce/run/zp342vvm).  
+
 We can see max rewards for each experiment's file with:  
 ```
 python max_rewards_from_files.py
