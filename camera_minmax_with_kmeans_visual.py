@@ -35,7 +35,7 @@ def main():
     plt.plot(x, y1, 'g_', ms=15)
     plt.axhline(y=0, color='black', linewidth=1, alpha=0.2)
     plt.xticks(np.arange(0, 160, step=10))
-    plt.xlabel('Kmeans clusters')
+    plt.xlabel('Number of KMeans clusters')
     plt.ylabel('min/max camera pitch (up/down) angle')
     plt.show()
 
