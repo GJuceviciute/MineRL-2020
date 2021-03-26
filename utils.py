@@ -13,7 +13,7 @@ def actions_from_file(data_set, trajectory):
     """
     Takes a trajectory path and returns all of it's actions as a list of tuples of strings.
     An example of an action: ('camera: [0. 0.]', 'nearbyCraft: iron_pickaxe').
-    :param data_set: data set name (for example: 'MineRLObtainDiamondDense-v0')
+    :param data_set: data set name (for example: 'MineRLObtainDiamond-v0')
     :param trajectory: trajectory path
     :return: list of actions
     """
@@ -34,10 +34,10 @@ def actions_from_file(data_set, trajectory):
 
 def deobfuscate_kmeans_actions(kmeans, action_mapping_dict):
     """
-    # TODO: write it up
-    :param kmeans:
-    :param action_mapping_dict:
-    :return:
+    For each centroid of given KMeans, finds the nearest obfuscated action in the mapping as measured by MSE.
+    :param kmeans: KMeans object
+    :param action_mapping_dict: mapping from non-obfuscated to obfuscated actions
+    :return: lists of deobfuscated actions and corresponding MSEs
     """
     centers = kmeans.cluster_centers_
     best_mses = []
@@ -124,10 +124,10 @@ def max_rewards(actions):
 
 def camera_stats(path, file):
     """
-    # TODO:
-    :param path:
-    :param file:
-    :return:
+    Gets all vertical camera action angles (positive angle means down) from a given KMeans experiment.
+    :param path: path to the experiments
+    :param file: filename of the experiment
+    :return: a list of vertical camera action angles
     """
     updown = []
     with open(os.path.join(path, file)) as txt:
